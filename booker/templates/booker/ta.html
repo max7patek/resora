@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block ta %}
+
+<script>
+(function worker() {
+  $.ajax({
+    url: '{% url 'bookings' %}',
+    success: function(data) {
+      $('#bookings').html(data);
+    },
+    complete: function() {
+      // Schedule the next request when the current one's complete
+      setTimeout(worker, 60000); // every minute
+    }
+  });
+})();
+</script>
+
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-2 center">
+  </div>
+  <div class="col-md-8 center">
+
+    <h2> Today's Bookings: </h2>
+    <div id="bookings">
+    </div>
+
+  </div>
+  <div class="col-md-2 center">
+  </div>
+</div>
+</div>
+
+
+{% endblock %}

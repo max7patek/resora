@@ -1,0 +1,3 @@
+
+
+MINUTES_PER_BOOKING = 10

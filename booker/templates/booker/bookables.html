@@ -1,0 +1,14 @@
+
+{% for bookable, booked in bookables %}
+
+  {% if booked is True %}
+
+    <p> {{ bookable.starttime }} </p>
+
+  {% else %}
+
+    <button value="{{ bookable.pk }}" onclick="book(this)"> {{ bookable.starttime }} </button> <p></p>
+
+  {% endif %}
+
+{% endfor %}

@@ -1,0 +1,21 @@
+
+
+<table>
+
+{% for row, time in rows %}
+
+<tr>
+
+<td> {{ time }} </td>
+
+{% for bookable in row %}
+
+<td> {{ bookable.booker.user.username }} </td>
+
+{% endfor %}
+
+</tr>
+
+{% endfor%}
+
+</table>
