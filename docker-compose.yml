@@ -3,6 +3,8 @@ version: '3'
 services:
   db:
     image: postgres
+    volumes:
+      - datavolume:/var/lib/postgresql/data
   web:
     build: .
     command: ./start.sh
@@ -12,3 +14,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+
+
+volumes:
+  datavolume:
