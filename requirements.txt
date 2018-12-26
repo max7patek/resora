@@ -2,3 +2,6 @@ Django==2.1.2
 psycopg2
 gunicorn
 django-allauth
+google-api-python-client
+httplib2
+oauth2client
