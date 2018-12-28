@@ -8,9 +8,15 @@ from booker.models import *
 
 from collections import Counter
 
+
+def is_ta(email):
+    return len(TA.objects.filter(email=email)) > 0
+
+
 def ta_required(func):
+    """should only wrap views that return HttpResponse"""
     def wrapper(request, *args, **kwargs):
-        if len(TA.objects.filter(email=request.user.email)) > 0:
+        if is_ta(request.user.email) > 0:
             return func(request, *args, **kwargs)
         else:
             template = loader.get_template('booker/must_be_ta.html')
@@ -21,7 +27,8 @@ def ta_required(func):
 # Create your views here.
 
 def main(request):
-    # TODO: direct to users booking if has one
+    if request.user.is_authenticated and is_ta(request.user.email):
+        return HttpResponseRedirect('ta')
     template = loader.get_template('booker/main.html')
     context = {}
     return HttpResponse(template.render(context, request))

@@ -8,10 +8,13 @@ import httplib2
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
+from backports.datetime_fromisoformat import MonkeyPatch
+MonkeyPatch.patch_fromisoformat()
+
 
 #global
 service_account_email = 'office-hour-booker@algorithmsbooker.iam.gserviceaccount.com'
-CLIENT_SECRET_FILE = 'secrets/AlgorithmsBooker-f554b310351f.json'
+CLIENT_SECRET_FILE = '/secrets/service_creds.json'
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 scopes = [SCOPES]
 default_cal = {

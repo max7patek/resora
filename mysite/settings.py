@@ -49,8 +49,6 @@ INSTALLED_APPS = [
     'booker',
 ]
 
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
