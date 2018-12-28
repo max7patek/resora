@@ -1,1 +1,2 @@
-* * * * * python3 manage.py pullofficehours 24
+*/5 * * * * /usr/bin/python3 /code/manage.py prune >> /var/log/cron.log 2>&1
+0 12 * * * /usr/bin/python3 /code/manage.py pullofficehours 24 >> /var/log/cron.log 2>&1
