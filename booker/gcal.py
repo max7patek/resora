@@ -89,3 +89,6 @@ def all_rules():
         page_token = resp.get('nextPageToken')
         if not page_token:
             break
+
+def parse_datetime(cal_datetime):
+    return datetime.datetime.fromisoformat(cal_datetime)

@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from config import MINUTES_PER_BOOKING
 import datetime
 
-from booker.gcal import grant_write_permission, remove_write_permission
+from booker.gcal import grant_write_permission, remove_write_permission, parse_datetime
 
 class TA(models.Model):
     email = models.CharField(max_length=50)
@@ -31,8 +31,14 @@ class OfficeHour(models.Model):
     @classmethod
     def make_from_event(cls, event):
         self = cls()
-        self.starttime = time.strptime(event['start']['datetime'], '%Y-%m-%dT%H:%M:%S.%f')
-        self.endtime = time.strptime(event['end']['datetime'], '%Y-%m-%dT%H:%M:%S.%f')
+        self.starttime = parse_datetime(event['start']['dateTime'])
+        self.endtime = parse_datetime(event['end']['dateTime'])
+        # self.starttime = datetime.datetime.strptime(
+        #     truncate_tz(event['start']['dateTime']),
+        #     '%Y-%m-%dT%H:%M:%S')
+        # self.endtime = datetime.datetime.strptime(
+        #     truncate_tz(event['end']['dateTime']),
+        #     '%Y-%m-%dT%H:%M:%S')
         self.location = event['location']
         self.event_id = event['id']
         self.save()

@@ -5,6 +5,7 @@ from booker.gcal import events_within
 from booker.models import OfficeHour
 
 import datetime
+import pytz
 
 
 class Command(BaseCommand):
@@ -15,10 +16,10 @@ class Command(BaseCommand):
         parser.add_argument('hours', type=int)
 
     def handle(self, *args, **options):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(pytz.timezone('America/New_York'))
         for event in events_within(now, now + datetime.timedelta(hours=options['hours'])):
             if len(OfficeHour.objects.filter(event_id=event['id'])) > 0:
-                self.stdout.write('Event at %s has already been pulled.' % event['start']['time'])
+                self.stdout.write('Event at %s has already been pulled.' % event['start']['dateTime'])
             else:
                 oh = OfficeHour.make_from_event(event)
                 self.stdout.write(self.style.SUCCESS(
