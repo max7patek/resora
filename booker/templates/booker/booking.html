@@ -1,0 +1,25 @@
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block booking %}
+
+<script type="text/javascript" src="{% static 'js/booking.js' %}"></script>
+
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-2 center">
+  </div>
+  <div class="col-md-8">
+    <h2 class="bottom-three"> Your booking is for {{ user.user.booking.starttime }} at {{ user.user.booking.officehour.location }}.</h2>
+    <button onclick="release(this)" class="danger"> CANCEL My Booking </button>
+
+  </div>
+  <div class="col-md-2 center">
+  </div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,14 +1,28 @@
 
-{% for bookable, booked in bookables %}
 
-  {% if booked is True %}
+{% extends 'base.html' %}
 
-    <p> {{ bookable.starttime }} </p>
+{% load static %}
 
-  {% else %}
+{% block bookables %}
 
-    <button value="{{ bookable.pk }}" onclick="book(this)"> {{ bookable.starttime }} </button> <p></p>
+<script type="text/javascript" src="{% static 'js/bookables.js' %}"></script>
 
-  {% endif %}
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-2 center">
+  </div>
+  <div class="col-md-8">
+    <h2> All Available Bookings Today: </h2>
+    <div id="all-bookables" class="centered">
+    </div>
+  </div>
+  <div class="col-md-2 center">
+  </div>
+</div>
+</div>
 
-{% endfor %}
+
+
+
+{% endblock %}
