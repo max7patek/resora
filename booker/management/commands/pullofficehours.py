@@ -1,8 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from booker.gcal import events_within
-
-from booker.models import OfficeHour
+from booker.models import OfficeHour, Calendar
 
 import datetime
 import pytz
@@ -17,11 +15,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         now = datetime.datetime.now(pytz.timezone('America/New_York'))
-        for event in events_within(now, now + datetime.timedelta(hours=options['hours'])):
-            if len(OfficeHour.objects.filter(event_id=event['id'])) > 0:
-                self.stdout.write('Event at %s has already been pulled.' % event['start']['dateTime'])
-            else:
-                oh = OfficeHour.make_from_event(event)
-                self.stdout.write(self.style.SUCCESS(
-                    'Successfully pulled office hour for %s' % oh.starttime
-                ))
+        for cal in Calendar.objects.filter(bookable=True):
+            for event in cal.events_within(now, now + datetime.timedelta(hours=options['hours'])):
+                if len(OfficeHour.objects.filter(event_id=event['id'])) > 0:
+                    self.stdout.write('Event at %s has already been pulled.' % event['start']['dateTime'])
+                else:
+                    oh = OfficeHour.make_from_event(event)
+                    self.stdout.write(self.style.SUCCESS(
+                        'Successfully pulled office hour for %s' % oh.starttime
+                    ))

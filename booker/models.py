@@ -4,21 +4,96 @@ from django.dispatch import receiver
 from config import MINUTES_PER_BOOKING
 import datetime
 
-from booker.gcal import grant_write_permission, remove_write_permission, parse_datetime
+from booker.gcal import get_service, parse_datetime
+
+
+class Calendar(models.Model):
+    id = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=25)
+    bookable = models.BooleanField()
+
+    def events_within(self, starttime, endtime=None):
+        if endtime is None:
+            endtime = starttime + datetime.timedelta(hours=24)
+        service = get_service()
+        page_token = None
+        while True:
+            resp = service.events().list(
+                calendarId=self.id,
+                pageToken=page_token,
+                timeMin=starttime.isoformat(),
+                timeMax=endtime.isoformat(),
+            ).execute()
+            yield from resp['items']
+            page_token = resp.get('nextPageToken')
+            if not page_token:
+                break
+
+    def grant_write_permission(self, email):
+        service = get_service()
+        rule = {
+            'scope': {
+                'type': 'user',
+                'value': email,
+            },
+            'role': 'writer',
+        }
+        return service.acl().insert(calendarId=self.id, body=rule).execute()['id']
+
+
+    def remove_write_permission(self, email):
+        service = get_service()
+        for rule in self.all_rules():
+            if rule['scope']['type'] == 'user' and rule['scope']['value'] == email:
+                service.acl().delete(calendarId=self.id, ruleId=rule['id'])
+
+
+    def all_rules(self):
+        service = get_service()
+        page_token = None
+        while True:
+            resp = service.acl().list(
+                calendarId=self.id,
+                pageToken=page_token,
+            ).execute()
+            yield from resp['items']
+            page_token = resp.get('nextPageToken')
+            if not page_token:
+                break
+
+@receiver(post_save, sender=Calendar)
+def add_permission_upon_add_calendar(sender, **kwargs):
+    instance = kwargs['instance']
+    if kwargs['created']:
+        for ta in TA.objects.all():
+            instance.grant_write_permission(ta.email)
+
+@receiver(pre_delete, sender=Calendar)
+def remove_gcalendar(sender, **kwargs):
+    instance = kwargs['instance']
+    service = get_service()
+    calendar_id = self.id
+    service.calendars().delete(calendarId=calendar_id).execute()
+
 
 class TA(models.Model):
     email = models.CharField(max_length=50)
 
+class Student(models.Model):
+    email = models.CharField(max_length=50)
+
 @receiver(post_save, sender=TA)
-def add_permission(sender, **kwargs):
+def add_permission_upon_add_ta(sender, **kwargs):
     instance = kwargs['instance']
     if kwargs['created']:
-        grant_write_permission(instance.email)
+        for cal in Calendar.objects.all():
+            cal.grant_write_permission(instance.email)
 
 @receiver(pre_delete, sender=TA)
 def remove_permission(sender, **kwargs):
     instance = kwargs['instance']
-    remove_write_permission(instance.email)
+    for cal in Calendar.objects.all():
+        cal.remove_write_permission(instance.email)
 
 
 
@@ -33,12 +108,6 @@ class OfficeHour(models.Model):
         self = cls()
         self.starttime = parse_datetime(event['start']['dateTime'])
         self.endtime = parse_datetime(event['end']['dateTime'])
-        # self.starttime = datetime.datetime.strptime(
-        #     truncate_tz(event['start']['dateTime']),
-        #     '%Y-%m-%dT%H:%M:%S')
-        # self.endtime = datetime.datetime.strptime(
-        #     truncate_tz(event['end']['dateTime']),
-        #     '%Y-%m-%dT%H:%M:%S')
         self.location = event['location']
         self.event_id = event['id']
         self.save()

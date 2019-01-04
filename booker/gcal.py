@@ -43,55 +43,5 @@ def get_service():
     # check if service still valid
     return _service
 
-
-def events_within(starttime, endtime=None):
-    if endtime is None:
-        endtime = starttime + datetime.timedelta(hours=24)
-    service = get_service()
-    page_token = None
-    while True:
-        resp = service.events().list(
-            calendarId=default_cal['id'],
-            pageToken=page_token,
-            timeMin=starttime.isoformat(),
-            timeMax=endtime.isoformat(),
-        ).execute()
-        yield from resp['items']
-        page_token = resp.get('nextPageToken')
-        if not page_token:
-            break
-
-def grant_write_permission(email):
-    service = get_service()
-    rule = {
-        'scope': {
-            'type': 'user',
-            'value': email,
-        },
-        'role': 'writer',
-    }
-    return service.acl().insert(calendarId=default_cal['id'], body=rule).execute()['id']
-
-
-def remove_write_permission(email):
-    service = get_service()
-    for rule in all_rule():
-        if rule['scope']['type'] == 'user' and rule['scope']['value'] == email:
-            service.acl().delete(calendarId=default_cal['id'], ruleId=rule['id'])
-
-
-def all_rules():
-    service = get_service()
-    page_token = None
-    while True:
-        resp = service.acl().list(
-            calendarId=default_cal['id'],
-            pageToken=page_token,
-        ).execute()
-        yield from resp['items']
-        page_token = resp.get('nextPageToken')
-        if not page_token:
-            break
-
 def parse_datetime(cal_datetime):
     return datetime.datetime.fromisoformat(cal_datetime)
