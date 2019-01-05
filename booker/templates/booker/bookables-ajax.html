@@ -1,4 +1,10 @@
 
+{% if no_bookables %}
+
+<p> No Bookable Office Hours Today </p>
+
+{% else %}
+
 {% for bookable, booked in bookables %}
 
   {% if booked is True %}
@@ -12,3 +18,5 @@
   {% endif %}
 
 {% endfor %}
+
+{% endif %}

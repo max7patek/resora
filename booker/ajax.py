@@ -15,6 +15,7 @@ def all_bookables(request):
     template = loader.get_template('booker/bookables-ajax.html')
     bookables = Bookable.objects.all()
     context = {
+        'no_bookables' : len(Bookable.objects.all()) == 0,
         'bookables' : zip(
             bookables,
             (hasattr(b, 'booker') and b.booker is not None for b in bookables)), # booked
