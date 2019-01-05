@@ -10,10 +10,16 @@ services:
     command: ./start.sh
     volumes:
       - .:/code
-    ports:
-      - "8000:8000"
     depends_on:
       - db
+  nginx:
+    image: nginx
+    ports:
+      - 8000:80
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - web
 
 
 volumes:
