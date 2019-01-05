@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from booker.models import OfficeHour, Bookable
-from config import MINUTES_PER_BOOKING
+from config.booker import MINUTES_PER_BOOKING
 
 import datetime
 import pytz
@@ -19,7 +19,7 @@ class Command(BaseCommand):
                 'Successfully deleted office hour that started at %s' % t
             ))
         for b in Bookable.objects.filter(starttime__lte=now+datetime.timedelta(minutes=MINUTES_PER_BOOKING)):
-            t = b.startime
+            t = b.starttime
             b.delete()
             self.stdout.write(self.style.SUCCESS(
                 'Successfully deleted bookable that started at %s' % t

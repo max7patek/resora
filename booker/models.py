@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from config import MINUTES_PER_BOOKING
+from config.booker import MINUTES_PER_BOOKING
 import datetime
 
 from booker.gcal import get_service, parse_datetime
