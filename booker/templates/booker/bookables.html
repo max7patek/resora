@@ -10,14 +10,23 @@
 
 <div class="container-fluid">
 <div class="row">
-  <div class="col-md-2 center">
+  <div class="col-md-1 center">
   </div>
-  <div class="col-md-8">
+  <div class="col-md-3">
     <h2> All Available Bookings Today: </h2>
-    <div id="all-bookables" class="centered">
+    <div id="all-bookables" class="center">
     </div>
   </div>
-  <div class="col-md-2 center">
+  <div class="col-md-7 hidden-xs center">
+    <h2> Upcoming Course Schedule: </h2>
+    <iframe
+      src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=1&amp;mode=WEEK&amp;wkst=7&amp;showDate=0&amp;
+      height=600&amp;wkst=1&amp;bgcolor=%23222222&amp;{% for id in calendars %}src={{id}}%40group.calendar.google.com&amp;color=%2329527A&amp;{% endfor %}
+      ctz=America%2FNew_York;"
+      style="border-width:0" width="800" height="600" frameborder="0" scrolling="no">
+    </iframe>
+  </div>
+  <div class="col-md-1 center">
   </div>
 </div>
 </div>
