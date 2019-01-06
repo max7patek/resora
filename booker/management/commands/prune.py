@@ -18,7 +18,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(
                 'Successfully deleted office hour that started at %s' % t
             ))
-        for b in Bookable.objects.filter(starttime__lte=now+datetime.timedelta(minutes=MINUTES_PER_BOOKING)):
+        for b in Bookable.objects.filter(starttime__lte=now-datetime.timedelta(minutes=MINUTES_PER_BOOKING)):
             t = b.starttime
             b.delete()
             self.stdout.write(self.style.SUCCESS(
