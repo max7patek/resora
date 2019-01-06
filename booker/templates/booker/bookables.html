@@ -8,27 +8,53 @@
 
 <script type="text/javascript" src="{% static 'js/bookables.js' %}"></script>
 
+<style>
+
+  .affix {
+    width: 100%;
+    z-index: 9999 !important;
+  }
+
+  #affixed-headers.affix {
+    top: 0;
+  }
+
+  #affixed-iframe.affix {
+    top: 50;
+  }
+
+
+</style>
+
 <div class="container-fluid">
-<div class="row">
-  <div class="col-md-1 center">
-  </div>
-  <div class="col-md-3">
-    <h2> All Available Bookings Today: </h2>
-    <div id="all-bookables" class="center">
+  <div class="row" style="opacity: 1;">
+    <div id="affixed-headers" data-spy="affix" data-offset-top="68" style="width: 100%;">
+    <div class="col-md-3" style="padding-left: 50px; z-index: 9998; background-color: #222222; opacity: 100%;" >
+      <!-- <div class="affix"> -->
+      <h2> Bookables Today: </h2>
+      <!-- </div> -->
+    </div>
+    <div class="col-md-9 hidden-xs hidden-sm " >
+      <h2 style=""> Upcoming Course Schedule: </h2>
+    </div>
     </div>
   </div>
-  <div class="col-md-7 hidden-xs center">
-    <h2> Upcoming Course Schedule: </h2>
-    <iframe
-      src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=1&amp;mode=WEEK&amp;wkst=7&amp;showDate=0&amp;
-      height=600&amp;wkst=1&amp;bgcolor=%23222222&amp;{% for id in calendars %}src={{id}}%40group.calendar.google.com&amp;color=%2329527A&amp;{% endfor %}
-      ctz=America%2FNew_York;"
-      style="border-width:0" width="800" height="600" frameborder="0" scrolling="no">
-    </iframe>
+  <div class="row" >
+    <div class="col-md-3" style="padding-left: 50px;">
+      <div id="all-bookables" style="padding-left: 20px;">
+      </div>
+    </div>
+    <div class="col-md-9 hidden-xs hidden-sm " >
+      <div id="affixed-iframe" data-spy="affix" data-offset-top="68">
+        <iframe
+        src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=1&amp;mode=WEEK&amp;wkst=7&amp;showDate=0&amp;
+        height=600&amp;wkst=1&amp;bgcolor=%23222222&amp;{% for id in calendars %}src={{id}}%40group.calendar.google.com&amp;color=%2329527A&amp;{% endfor %}
+        ctz=America%2FNew_York;"
+        style="border-width: 0;" width="800" height="600" frameborder="0" scrolling="no">
+      </iframe>
+      </div>
+    </div>
   </div>
-  <div class="col-md-1 center">
-  </div>
-</div>
 </div>
 
 
