@@ -22,10 +22,18 @@ def all_bookables(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
+def booked(request):
+    if request.user.user.booking is not None:
+        return JsonResponse({'booked':True})
+    else:
+        return JsonResponse({'booked':False})
 
 @login_required
-@ta_required
 def bookings(request):
+    if not is_ta(request.user.email):
+        template = loader.get_template('booker/mustbeta-ajax.html')
+        return HttpResponse(template.render({'email':request.user.email}, request))
     template = loader.get_template('booker/bookings-ajax.html')
     bookables = sorted(Bookable.objects.all(), key=lambda i: i.starttime)
     if len(bookables) == 0:
@@ -46,21 +54,30 @@ def bookings(request):
 
 @login_required
 def book(request):
+    if not is_enrolled(request.user.email):
+        return JsonResponse({
+            'error': True,
+            'message': 'Must be enrolled to book office hours.',
+        })
+
     pk = request.GET.get('bookable')
     with transaction.atomic():
         try:
             bookable = Bookable.objects.select_for_update().get(pk=pk)
             if hasattr(bookable, 'booker') and bookable.booker is not None:
                 return JsonResponse({
-                    'result': 'Bookable has already been booked'
+                    'error': True,
+                    'message': 'Bookable has already been booked.',
                 })
             request.user.user.book(bookable)
         except Bookable.DoesNotExist:
             return JsonResponse({
-                'result': 'Bookable does not exist'
+                'error': True,
+                'message': 'Bookable does not exist.'
             })
     return JsonResponse({
-        'result': 'success'
+        'error': False,
+        'message': 'Success!',
     })
 
 @login_required

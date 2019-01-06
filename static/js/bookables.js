@@ -17,6 +17,11 @@ book = function(btn) {
     data: {
       'bookable': btn.value,
     },
+    success: function (data) {
+      if (data['error'] == true)
+      //console.log(data);
+        alert(data['message']);
+    },
     complete: function() {
       location.reload()
     }
@@ -24,5 +29,5 @@ book = function(btn) {
   btn.innerText = 'pending';
   children = document.getElementById('all-bookables').children;
   for (var i =0; i < children.length; i++)
-    children[i].disabled = true; // TODO fix this
+    children[i].disabled = true;
 }
