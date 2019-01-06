@@ -12,4 +12,5 @@ urlpatterns = [
     path('ajax/book', ajax.book, name='book'),
     path('ajax/release-booking', ajax.release_booking, name='release-booking'),
     path('ajax/bookings', ajax.bookings, name='bookings'),
+    path('ajax/booked', ajax.booked, name='booked'),
 ]
