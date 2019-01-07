@@ -15,12 +15,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         now = datetime.datetime.now(pytz.timezone('America/New_York'))
-        for cal in Calendar.objects.filter(bookable=True):
+        for cal in Calendar.objects.filter(minutes_per_booking__gt=0):
             for event in cal.events_within(now, now + datetime.timedelta(hours=options['hours'])):
                 if len(OfficeHour.objects.filter(event_id=event['id'])) > 0:
                     self.stdout.write('Event at %s has already been pulled.' % event['start']['dateTime'])
                 else:
-                    oh = OfficeHour.make_from_event(event)
+                    oh = OfficeHour.make_from_event(event, cal.minutes_per_booking)
                     self.stdout.write(self.style.SUCCESS(
                         'Successfully pulled office hour for %s' % oh.starttime
                     ))

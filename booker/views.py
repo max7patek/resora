@@ -20,7 +20,7 @@ def bookables(request):
     template = loader.get_template('booker/bookables.html')
     calendars = []
     for cal in Calendar.objects.all():
-        gcal_id = cal.id
+        gcal_id = cal.gcal_id
         calendars.append(gcal_id.split('@')[0])
     return HttpResponse(template.render({'calendars':calendars}, request))
 
