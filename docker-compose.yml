@@ -5,11 +5,14 @@ services:
     image: postgres
     volumes:
       - datavolume:/var/lib/postgresql/data
+    env_file:
+      - ./secrets/databaseconfig
   web:
     build: .
     command: ./start.sh
     volumes:
       - .:/code
+      - staticvolume:/collected-static
     depends_on:
       - db
   nginx:
@@ -18,9 +21,11 @@ services:
       - 8000:80
     volumes:
       - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - staticvolume:/collected-static
     depends_on:
       - web
 
 
 volumes:
   datavolume:
+  staticvolume:

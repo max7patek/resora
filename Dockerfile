@@ -14,6 +14,7 @@ ADD requirements.txt /code/
 RUN pip3 install -r requirements.txt
 ADD . /code/
 ADD ./secrets/service_creds.json /secrets/service_creds.json
+ADD ./secrets/databaseconfig /secrets/databaseconfig
 
 # Add crontab file in the cron directory
 ADD cronfile /etc/cron.d/cronfile
