@@ -13,9 +13,10 @@ from booker.authorization import *
 @login_required
 def all_bookables(request):
     template = loader.get_template('booker/bookables-ajax.html')
-    bookables = Bookable.objects.all()
+    bookables = list(Bookable.objects.all())
+    bookables = sorted(bookables, key=lambda i: i.starttime)
     context = {
-        'no_bookables' : len(Bookable.objects.all()) == 0,
+        'no_bookables' : len(bookables) == 0,
         'bookables' : zip(
             bookables,
             (hasattr(b, 'booker') and b.booker is not None for b in bookables)), # booked
