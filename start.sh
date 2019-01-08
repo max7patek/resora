@@ -5,7 +5,7 @@ crontab -l
 cron
 
 echo Collecting Static Files
-echo python3 manage.py collectstatic
+python3 manage.py collectstatic --no-input
 
 echo Starting Gunicorn.
 exec gunicorn mysite.wsgi:application \

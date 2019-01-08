@@ -31,9 +31,6 @@ RUN touch /var/log/cron.log
 # COPY startup script into known file location in container
 COPY start.sh /start.sh
 
-# EXPOSE port 8000 to allow communication to/from server
-EXPOSE 8000
-
 # done!
 
 

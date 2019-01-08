@@ -5,27 +5,41 @@ services:
     image: postgres
     volumes:
       - datavolume:/var/lib/postgresql/data
+    networks:  # <-- here
+      - db_network
     env_file:
       - ./secrets/databaseconfig
+  nginx:
+    build: ./config/nginx
+    command: [nginx-debug, '-g', 'daemon off;']
+    ports:
+      - 8000:80
+      - 443:443
+    volumes:
+      - staticvolume:/collected-static
+    networks:  # <-- here
+      - nginx_network
+    depends_on:
+      - web
   web:
     build: .
-    command: ./start.sh
+    command: /start.sh
     volumes:
-      - .:/code
       - staticvolume:/collected-static
     depends_on:
       - db
-  nginx:
-    image: nginx
-    ports:
-      - 8000:80
-    volumes:
-      - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - staticvolume:/collected-static
-    depends_on:
-      - web
+    networks:  # <-- here
+      - nginx_network
+      - db_network
+    expose:
+      - 8000
 
 
+networks:  # <-- and here
+  nginx_network:
+    driver: bridge
+  db_network:
+    driver: bridge
 volumes:
   datavolume:
   staticvolume:
