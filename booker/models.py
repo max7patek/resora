@@ -118,8 +118,22 @@ def remove_gcalendar(sender, **kwargs):
 class TA(models.Model):
     email = models.CharField(max_length=50)
 
+    @classmethod
+    def make(cls, email):
+        self = cls()
+        self.email = email
+        self.save()
+        return self
+
 class Student(models.Model):
     email = models.CharField(max_length=50)
+
+    @classmethod
+    def make(cls, email):
+        self = cls()
+        self.email = email
+        self.save()
+        return self
 
 @receiver(post_save, sender=TA)
 def add_permission_upon_add_ta(sender, **kwargs):

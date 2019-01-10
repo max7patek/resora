@@ -3,9 +3,12 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import Context, loader
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.core.management import call_command
+
 
 from booker.models import *
 from booker.authorization import *
+from booker.forms import *
 
 from collections import Counter
 
@@ -35,8 +38,31 @@ def booking(request):
 
 @login_required
 def as_ta(request):
+    if not is_ta(request.user.email):
+        return HttpResponseRedirect('/bookables')
     template = loader.get_template('booker/ta.html')
-    return HttpResponse(template.render({}, request))
+    return HttpResponse(template.render({'form':UploadRosterForm()}, request))
+
+@login_required
+def manual_pull(request):
+    if not is_ta(request.user.email):
+        return HttpResponseRedirect('/bookables')
+    if request.method == 'POST':
+        call_command('pullofficehours', request.POST.get('hours'))
+    return HttpResponseRedirect('/ta')
+
+@login_required
+def roster_upload(request):
+    if not is_ta(request.user.email):
+        return HttpResponseRedirect('/bookables')
+    if request.method == 'POST':
+        form = UploadRosterForm(request.POST, request.FILES)
+        if form.is_valid():
+            UploadRosterForm.handle_uploaded_file(request.FILES['file'], request.POST.get('override'))
+            return HttpResponseRedirect('/ta')
+    else:
+        form = UploadRosterForm()
+    return HttpResponseRedirect('/ta')
 
 def landing(request):
     if request.user.is_authenticated:

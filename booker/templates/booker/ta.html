@@ -8,16 +8,32 @@
 
 <div class="container-fluid">
 <div class="row">
-  <div class="col-md-2 center">
+  <div class="col-md-1 center">
   </div>
-  <div class="col-md-8 center">
+  <div class="col-md-6 center">
 
     <h2> Today's Bookings: </h2>
     <div id="bookings">
     </div>
 
   </div>
-  <div class="col-md-2 center">
+  <div class="col-md-4 center">
+
+    <form action="{% url 'manual-pull'%}" method='post' class="bottom-three" onsubmit="return confirm('Please Note: This will permenantly create bookables for any events in any bookable calendar! Bookables cannot be changed once created. Make sure that all events being pulled have locations and are actually staffed!');">
+      {% csrf_token %}
+      Manually pull office hours for the next <input type="number" name="hours" value="hours" min="1" max="48" required> hours.
+      <input type="submit" value="Submit">
+    </form>
+
+    <form action="{% url 'roster-upload'%}" method='post' enctype="multipart/form-data" class="bottom-three">
+      Upload a roster here. Roster files should be plain text with a student email per line.
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Submit">
+    </form>
+
+  </div>
+  <div class="col-md-1 center">
   </div>
 </div>
 </div>
