@@ -4,7 +4,7 @@
 {% load socialaccount %}
 
 <head>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- JQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -28,7 +28,7 @@
   {% if user.is_authenticated %}
   <a  href="{% url 'account_logout' %}" style="padding-right: 16px;">Log Out</a>
   {% else %}
-  <a  href="{% provider_login_url 'google' %}">Log In with your UVA Google Account</a>
+  <a  href="{% provider_login_url 'google' %}" style="padding-right: 16px;">Log In with your UVA Google Account</a>
   {% endif %}
   </ul>
   </div>
