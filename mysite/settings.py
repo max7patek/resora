@@ -27,7 +27,7 @@ SECRET_KEY = KEYS.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'www.obadiah.cs.virginia.edu', 'obadiah.cs.virginia.edu']
+ALLOWED_HOSTS = ['127.0.0.1', '35.184.25.16', 'resora-ohs.com', 'www.obadiah.cs.virginia.edu', 'obadiah.cs.virginia.edu']
 
 
 # Application definition
