@@ -15,14 +15,6 @@ class User(models.Model):
     booking = models.OneToOneField(Bookable, related_name='booker', null=True, default=None, on_delete=models.SET_NULL)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
-    def book(self, bookable):
-        self.booking = bookable
-        self.save()
-
-    def release_booking(self):
-        self.booking = None
-        self.save()
-
     @classmethod
     def make(cls, user):
         self = cls()

@@ -8,18 +8,25 @@ from django.contrib.auth.decorators import login_required
 from booker.models import *
 from booker.authorization import *
 
+from users.models import User
+
+import datetime
+import booker.patches
+
+
+
+
 
 
 @login_required
 def all_bookables(request):
     template = loader.get_template('booker/bookables-ajax.html')
-    bookables = list(Bookable.objects.all())
-    bookables = sorted(bookables, key=lambda i: i.starttime)
+    bookables = Bookable.objects.all()
+    times = sorted(set(map(lambda i: i.starttime, bookables)))
+    availabilities = map(Bookable.any_available_at_time, times)
     context = {
-        'no_bookables' : len(bookables) == 0,
-        'bookables' : zip(
-            bookables,
-            (hasattr(b, 'booker') and b.booker is not None for b in bookables)), # booked
+        'no_bookables' : len(times) == 0,
+        'times_isos_and_availabilities' : zip(times, map(datetime.datetime.isoformat, times), availabilities),
     }
     return HttpResponse(template.render(context, request))
 
@@ -42,7 +49,7 @@ def bookings(request):
     else:
         rows = [[bookables[0]]]
         for i in range(1, len(bookables)):
-            if bookables[i].starttime == bookables[i-1]:
+            if bookables[i].starttime == bookables[i-1].starttime:
                 rows[-1].append(bookables[i])
             else:
                 rows.append([bookables[i]])
@@ -60,28 +67,27 @@ def book(request):
             'error': True,
             'message': 'Must be enrolled to book office hours.',
         })
-
-    pk = request.GET.get('bookable')
+    time = datetime.datetime.fromisoformat(request.GET.get('time'))
     with transaction.atomic():
-        try:
-            bookable = Bookable.objects.select_for_update().get(pk=pk)
-            if hasattr(bookable, 'booker') and bookable.booker is not None:
+        bookables = Bookable.objects.select_for_update().filter(starttime=time)
+        for b in bookables:
+            if b.available():
+                request.user.user.booking = b
+                request.user.user.save()
                 return JsonResponse({
-                    'error': True,
-                    'message': 'Bookable has already been booked.',
+                    'error': False,
+                    'message': 'Successfully booked!',
                 })
-            request.user.user.book(bookable)
-        except Bookable.DoesNotExist:
+        else:
             return JsonResponse({
                 'error': True,
-                'message': 'Bookable does not exist.'
+                'message': 'No available bookables at this time.',
             })
-    return JsonResponse({
-        'error': False,
-        'message': 'Success!',
-    })
 
 @login_required
 def release_booking(request):
-    request.user.user.release_booking()
+    with transaction.atomic():
+        usr = User.objects.select_for_update().get(pk=request.user.user.pk)
+        usr.booking = None
+        usr.save()
     return JsonResponse({})

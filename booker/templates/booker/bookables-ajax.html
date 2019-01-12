@@ -5,15 +5,15 @@
 
 {% else %}
 
-{% for bookable, booked in bookables %}
+{% for time, iso, available in times_isos_and_availabilities %}
 
-  {% if booked is True %}
+  {% if available is False %}
 
-    <p> {{ bookable.starttime }} </p>
+    <p> {{ time }} </p>
 
   {% else %}
 
-    <button value="{{ bookable.pk }}" onclick="book(this)"> {{ bookable.starttime }} </button> <p></p>
+    <button value="{{ iso }}" onclick="book(this)"> {{ time }} </button> <p></p>
 
   {% endif %}
 

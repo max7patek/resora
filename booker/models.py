@@ -173,6 +173,12 @@ class Bookable(models.Model):
     officehour = models.ForeignKey('OfficeHour', on_delete=models.CASCADE)
     starttime = models.DateTimeField()
 
+    def booked(self):
+        return hasattr(self, 'booker') and self.booker is not None
+
+    def available(self):
+        return not self.booked()
+
     @classmethod
     def make(cls, officehour, starttime):
         self = cls()
@@ -180,6 +186,18 @@ class Bookable(models.Model):
         self.starttime = starttime
         self.save()
         return self
+
+    @staticmethod
+    def any_available_at_time(time):
+        return any(map(Bookable.available, Bookable.objects.filter(starttime=time)))
+
+    @staticmethod
+    def select_available_at_time(time):
+        for b in Bookable.objects.filter(starttime=time):
+            if b.available():
+                return b
+        else:
+            return None
 
 
 @receiver(post_save, sender=OfficeHour)

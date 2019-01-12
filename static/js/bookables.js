@@ -15,7 +15,7 @@ book = function(btn) {
   $.ajax({
     url: 'ajax/book',
     data: {
-      'bookable': btn.value,
+      'time': btn.value,
     },
     success: function (data) {
       if (data['error'] == true)
