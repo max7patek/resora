@@ -33,6 +33,11 @@ button {
   background-color: #CCCCCC;
 }
 
+.btn {
+  color: black;
+  background-color: #CCCCCC;
+}
+
 table, th, td {
   border: 1px solid black;
 }
