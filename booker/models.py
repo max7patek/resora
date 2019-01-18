@@ -115,8 +115,13 @@ def remove_gcalendar(sender, **kwargs):
     instance.delete_cal
 
 
+# Force email addresses to be lowercase
+class LowerField(models.CharField):
+    def get_prep_value(self, value):
+        return str(value).lower()
+
 class TA(models.Model):
-    email = models.CharField(max_length=50)
+    email = LowerField(max_length=50)
 
     @classmethod
     def make(cls, email):
@@ -126,7 +131,7 @@ class TA(models.Model):
         return self
 
 class Student(models.Model):
-    email = models.CharField(max_length=50)
+    email = LowerField(max_length=50)
 
     @classmethod
     def make(cls, email):
@@ -206,6 +211,10 @@ def spawn_bookables(sender, **kwargs):
     if instance.minutes_per_booking <= 0:
         return
     t = instance.starttime
-    while t < instance.endtime:
-        Bookable.make(instance, t)
-        t = t + datetime.timedelta(minutes=instance.minutes_per_booking)
+    delta = datetime.timedelta(minutes=instance.minutes_per_booking)
+    count = 0
+    while t + delta < instance.endtime:
+        count += 1
+        if count % 7 != 0: # skip a slot for each 6 bookables
+            Bookable.make(instance, t)
+        t = t + delta
