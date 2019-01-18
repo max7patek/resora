@@ -15,6 +15,18 @@ h2 {
   font-style: normal; font-variant: normal; font-weight: bold; font-size: 18px;
   text-shadow: 0px 0px;
 }
+h3 {
+  color: #E57200;
+  font-family: "Franklin Gothic Medium", "Franklin Gothic", "ITC Franklin Gothic", Arial, sans-serif;
+  font-style: normal; font-variant: normal; font-weight: bold; font-size: 16px;
+  text-shadow: 0px 0px;
+}
+h4 {
+  color: #E57200;
+  font-family: "Franklin Gothic Medium", "Franklin Gothic", "ITC Franklin Gothic", Arial, sans-serif;
+  font-style: normal; font-variant: normal; font-weight: bold; font-size: 14px;
+  text-shadow: 0px 0px;
+}
 
 button {
   color: black;
@@ -47,6 +59,10 @@ th, td {
   font-family: "Franklin Gothic Medium", "Franklin Gothic", "ITC Franklin Gothic", Arial, sans-serif;
   font-style: normal; font-variant: normal; font-weight: bold; font-size: 24px;
   text-shadow: 0px 0px;
+}
+
+.navbar-brand:hover{
+  color: #E57200;
 }
 
 .navbar-nav li a {

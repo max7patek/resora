@@ -19,18 +19,32 @@
   </div>
   <div class="col-md-4 center">
 
+    <h2> Administrative: </h2>
+
+    <h3> Pull Office Hours</h3>
+
     <form action="{% url 'manual-pull'%}" method='post' class="bottom-three" onsubmit="return confirm('Please Note: This will permenantly create bookables for any events in any bookable calendar! Bookables cannot be changed once created. Make sure that all events being pulled have locations and are actually staffed!');">
       {% csrf_token %}
       Manually pull office hours for the next <input type="number" name="hours" value="hours" min="1" max="48" required> hours.
-      <input type="submit" value="Submit" style="color: black;">
+      <input type="submit" class="btn" value="Submit" style="color: black;">
     </form>
+
+    <h3> Upload Roster</h3>
 
     <form action="{% url 'roster-upload'%}" method='post' enctype="multipart/form-data" class="bottom-three">
       <p>Upload a roster here. Roster files should be plain text with a student email per line.</p>
       {% csrf_token %}
       {{ form.as_p }}
-      <input type="submit" value="Submit" style="color: black;">
+      <input type="submit" class="btn" value="Submit" style="color: black;">
     </form>
+
+    <h3> Current Roster</h3>
+
+    <ul>
+    {% for email in roster %}
+      <li> {{ email }} </li>
+    {% endfor %}
+    </ul>
 
   </div>
   <div class="col-md-1 center">

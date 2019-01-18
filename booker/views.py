@@ -41,7 +41,11 @@ def as_ta(request):
     if not is_ta(request.user.email):
         return HttpResponseRedirect('/bookables')
     template = loader.get_template('booker/ta.html')
-    return HttpResponse(template.render({'form':UploadRosterForm()}, request))
+    context = {
+        'form':UploadRosterForm(),
+        'roster': map(lambda i: i.email, Student.objects.all()),
+    }
+    return HttpResponse(template.render(context, request))
 
 @login_required
 def manual_pull(request):
