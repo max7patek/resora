@@ -212,8 +212,9 @@ def spawn_bookables(sender, **kwargs):
         return
     t = instance.starttime
     delta = datetime.timedelta(minutes=instance.minutes_per_booking)
+    epsilan = datetime.timedelta(minutes=1)
     count = 0
-    while t + delta < instance.endtime:
+    while t + delta <= instance.endtime + epsilan:
         count += 1
         if count % 7 != 0: # skip a slot for each 6 bookables
             Bookable.make(instance, t)
