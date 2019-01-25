@@ -63,6 +63,7 @@ class Calendar(models.Model):
                 pageToken=page_token,
                 timeMin=starttime.isoformat(),
                 timeMax=endtime.isoformat(),
+                singleEvents=True,
             ).execute()
             yield from resp['items']
             page_token = resp.get('nextPageToken')
