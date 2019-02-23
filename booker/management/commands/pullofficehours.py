@@ -17,8 +17,13 @@ class Command(BaseCommand):
         now = datetime.datetime.now(pytz.timezone('America/New_York'))
         for cal in Calendar.objects.filter(minutes_per_booking__gt=0):
             for event in cal.events_within(now, now + datetime.timedelta(hours=options['hours'])):
-                if len(OfficeHour.objects.filter(event_id=event['id'])) > 0:
+                if OfficeHour.objects.filter(event_id=event['id']).exists():
                     self.stdout.write('Event at %s has already been pulled.' % event['start']['dateTime'])
+                    if 'location' in event:
+                        self.stdout.write('Updating location for event at %s.' % event['start']['dateTime'])
+                        for oh in OfficeHour.objects.filter(event_id=event['id']):
+                            oh.location = event['location']
+                            oh.save()
                 else:
                     oh = OfficeHour.make_from_event(event, cal.minutes_per_booking)
                     self.stdout.write(self.style.SUCCESS(

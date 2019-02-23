@@ -168,7 +168,10 @@ class OfficeHour(models.Model):
         self = cls()
         self.starttime = parse_datetime(event['start']['dateTime'])
         self.endtime = parse_datetime(event['end']['dateTime'])
-        self.location = event['location']
+        if 'location' in event:
+            self.location = event['location']
+        else:
+            self.location = 'TBD'
         self.event_id = event['id']
         self.minutes_per_booking = minutes_per_booking
         self.save()
@@ -208,15 +211,16 @@ class Bookable(models.Model):
 
 @receiver(post_save, sender=OfficeHour)
 def spawn_bookables(sender, **kwargs):
-    instance = kwargs['instance']
-    if instance.minutes_per_booking <= 0:
-        return
-    t = instance.starttime
-    delta = datetime.timedelta(minutes=instance.minutes_per_booking)
-    epsilan = datetime.timedelta(minutes=1)
-    count = 0
-    while t + delta <= instance.endtime + epsilan:
-        count += 1
-        if count % 7 != 0: # skip a slot for each 6 bookables
-            Bookable.make(instance, t)
-        t = t + delta
+    if kwargs['created']:
+        instance = kwargs['instance']
+        if instance.minutes_per_booking <= 0:
+            return
+        t = instance.starttime
+        delta = datetime.timedelta(minutes=instance.minutes_per_booking)
+        epsilan = datetime.timedelta(minutes=1)
+        count = 0
+        while t + delta <= instance.endtime + epsilan:
+            count += 1
+            if count % 7 != 0: # skip a slot for each 6 bookables
+                Bookable.make(instance, t)
+            t = t + delta
