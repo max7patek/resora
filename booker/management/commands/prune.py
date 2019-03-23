@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from booker.models import OfficeHour, Bookable
+import mysite.settings as settings
 
 import datetime
 import pytz
@@ -10,7 +11,7 @@ class Command(BaseCommand):
     help = "'prune' removes any bookables and officehours that have passed"
 
     def handle(self, *args, **options):
-        now = datetime.datetime.now(pytz.timezone('America/New_York'))
+        now = datetime.datetime.now(pytz.timezone(settings.TIME_ZONE))
         for oh in OfficeHour.objects.filter(endtime__lte=now):
             t = oh.starttime
             oh.delete()

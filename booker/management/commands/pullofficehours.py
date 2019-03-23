@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from booker.models import OfficeHour, Calendar
+import mysite.settings as settings
 
 import datetime
 import pytz
@@ -14,7 +15,7 @@ class Command(BaseCommand):
         parser.add_argument('hours', type=int)
 
     def handle(self, *args, **options):
-        now = datetime.datetime.now(pytz.timezone('America/New_York'))
+        now = datetime.datetime.now(pytz.timezone(settings.TIME_ZONE))
         for cal in Calendar.objects.filter(minutes_per_booking__gt=0):
             for event in cal.events_within(now, now + datetime.timedelta(hours=options['hours'])):
                 if OfficeHour.objects.filter(event_id=event['id']).exists():

@@ -4,6 +4,7 @@ from django.dispatch import receiver
 import datetime
 
 from booker.gcal import get_service, parse_datetime
+import mysite.settings as settings
 
 NO_CAL_SIGNAL = 'no calendar'
 
@@ -15,7 +16,7 @@ class Calendar(models.Model):
     def cal_made(self):
         return self.gcal_id != NO_CAL_SIGNAL
 
-    def make_cal(self, cal_timezone='America/New_York'):
+    def make_cal(self, cal_timezone=settings.TIME_ZONE):
         if self.cal_made():
             print("found cal ", self.gcal_id)
             return False
